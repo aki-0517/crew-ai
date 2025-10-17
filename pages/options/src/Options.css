@@ -20,16 +20,17 @@
 }
 
 code {
-  background: rgba(148, 163, 184, 0.5);
+  background: rgba(23, 23, 23, 0.8);
   border-radius: 0.25rem;
   padding: 0.2rem 0.5rem;
+  color: #a3a3a3;
 }
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   code {
-    background: rgba(30, 58, 138, 0.4);
-    color: #7dd3fc;
+    background: rgba(241, 245, 249, 1); /* slate-100 */
+    color: #0f172a; /* slate-900 */
   }
   
   .dark-mode-text {

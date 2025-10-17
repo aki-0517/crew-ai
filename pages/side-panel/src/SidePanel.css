@@ -60,13 +60,13 @@ code {
   align-items: center;
   padding: 0.75rem;
   background-color: transparent;
-  border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+  border-bottom: 1px solid rgba(203, 213, 225, 0.8); /* slate-300 */
 }
 
 /* Dark mode header border */
 @media (prefers-color-scheme: dark) {
   .header {
-    border-bottom: 1px solid rgba(14, 165, 233, 0.3);
+    border-bottom: 1px solid rgba(226, 232, 240, 1); /* slate-200 */
   }
 }
 
@@ -82,26 +82,26 @@ code {
 }
 
 .header-icon {
-  color: #19C2FF;
+  color: #334155; /* slate-700 */
   cursor: pointer;
   transition: color 0.2s ease;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .header-icon:hover {
-  color: #0073DC;
+  color: #0f172a; /* slate-900 */
   opacity: 1;
 }
 
 .send-button {
-  color: #19C2FF;
+  color: #334155; /* slate-700 */
   cursor: pointer;
   transition: color 0.2s ease;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .send-button:hover {
-  color: #0073DC;
+  color: #0f172a; /* slate-900 */
   opacity: 1;
 }
 
@@ -122,16 +122,16 @@ code {
 }
 
 .scrollbar-gutter-stable::-webkit-scrollbar-track {
-  background: #f1f5f9;  /* sky-50 */
+  background: #e2e8f0;  /* slate-200 */
 }
 
 .scrollbar-gutter-stable::-webkit-scrollbar-thumb {
-  background: #7dd3fc;  /* sky-300 - very light blue */
+  background: #94a3b8;  /* slate-400 */
   border-radius: 4px;
 }
 
 .scrollbar-gutter-stable::-webkit-scrollbar-thumb:hover {
-  background: #38bdf8;  /* sky-400 - slightly darker on hover */
+  background: #64748b;  /* slate-500 */
 }
 
 /* Dark mode scrollbar for scrollbar-gutter-stable */
