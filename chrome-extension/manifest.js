@@ -39,8 +39,8 @@ function withOperaSidebar(manifest) {
   return deepmerge(manifest, {
     sidebar_action: {
       default_panel: 'side-panel/index.html',
-      default_title: 'Nanobrowser',
-      default_icon: 'icon-32.png',
+      default_title: 'Crew',
+      default_icon: 'logo.jpg',
     },
   });
 }
@@ -68,10 +68,15 @@ const manifest = withOperaSidebar(
       type: 'module',
     },
     action: {
-      default_icon: 'icon-32.png',
+      default_icon: {
+        16: 'logo-16.png',
+        32: 'logo-32.png',
+      },
     },
     icons: {
-      128: 'icon-128.png',
+      16: 'logo-16.png',
+      32: 'logo-32.png',
+      128: 'logo-128.png',
     },
     content_scripts: [
       {
@@ -82,15 +87,7 @@ const manifest = withOperaSidebar(
     ],
     web_accessible_resources: [
       {
-        resources: [
-          '*.js',
-          '*.css',
-          '*.svg',
-          'icon-128.png',
-          'icon-32.png',
-          'permission/index.html',
-          'permission/permission.js',
-        ],
+        resources: ['*.js', '*.css', '*.svg', 'logo.jpg', 'permission/index.html', 'permission/permission.js'],
         matches: ['*://*/*'],
       },
     ],
