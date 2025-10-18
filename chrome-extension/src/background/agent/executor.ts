@@ -69,7 +69,7 @@ export class Executor {
     this.plannerPrompt = new PlannerPrompt();
 
     const actionBuilder = new ActionBuilder(context, extractorLLM);
-    const navigatorActionRegistry = new NavigatorActionRegistry(actionBuilder.buildDefaultActions());
+    const navigatorActionRegistry = new NavigatorActionRegistry(actionBuilder.buildAllActions());
 
     // Initialize agents with their respective prompts
     this.navigator = new NavigatorAgent(navigatorActionRegistry, {

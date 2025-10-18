@@ -28,6 +28,8 @@ import { createLogger } from '@src/background/log';
 import { ExecutionState, Actors } from '../event/types';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { wrapUntrustedContent } from '../messages/utils';
+import { getMCPClient } from '../mcp/client';
+import { MCP_TOOL_SCHEMAS } from '../mcp/schemas';
 
 const logger = createLogger('Action');
 
@@ -147,6 +149,13 @@ export class ActionBuilder {
   constructor(context: AgentContext, extractorLLM: BaseChatModel) {
     this.context = context;
     this.extractorLLM = extractorLLM;
+  }
+
+  /**
+   * Build all actions including browser actions and MCP tools
+   */
+  buildAllActions(): Action[] {
+    return [...this.buildDefaultActions(), ...this.buildMCPActions()];
   }
 
   buildDefaultActions() {
@@ -702,6 +711,64 @@ export class ActionBuilder {
     );
     actions.push(selectDropdownOption);
 
+    return actions;
+  }
+
+  /**
+   * Build MCP actions from DeFi Llama server
+   * Gracefully handles server unavailability
+   */
+  buildMCPActions(): Action[] {
+    const mcpClient = getMCPClient();
+    const actions: Action[] = [];
+
+    // Create actions for each MCP tool schema
+    for (const toolSchema of MCP_TOOL_SCHEMAS) {
+      const action = new Action(async (input: Record<string, unknown>) => {
+        this.context.emitEvent(Actors.NAVIGATOR, ExecutionState.ACT_START, `Calling ${toolSchema.name}...`);
+
+        try {
+          const result = await mcpClient.callTool(toolSchema.name, input);
+
+          if (result.error) {
+            // MCP server failed - return error but allow agent to continue
+            const errorMsg = `MCP tool ${toolSchema.name} failed: ${result.error}`;
+            logger.warning(errorMsg);
+            this.context.emitEvent(Actors.NAVIGATOR, ExecutionState.ACT_FAIL, errorMsg);
+
+            return new ActionResult({
+              extractedContent: `Error: ${result.error}. Try alternative approaches or browser actions.`,
+              includeInMemory: true,
+              error: result.error,
+            });
+          }
+
+          // Success - return the data
+          this.context.emitEvent(Actors.NAVIGATOR, ExecutionState.ACT_OK, `Retrieved data from ${toolSchema.name}`);
+
+          return new ActionResult({
+            extractedContent: result.content,
+            includeInMemory: true,
+          });
+        } catch (error) {
+          // Unexpected error - still allow agent to continue
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          logger.error(`MCP action error: ${errorMsg}`);
+
+          this.context.emitEvent(Actors.NAVIGATOR, ExecutionState.ACT_FAIL, errorMsg);
+
+          return new ActionResult({
+            extractedContent: `Error calling MCP tool. Server may be offline. Try alternative approaches.`,
+            includeInMemory: true,
+            error: errorMsg,
+          });
+        }
+      }, toolSchema);
+
+      actions.push(action);
+    }
+
+    logger.info(`Registered ${actions.length} MCP actions`);
     return actions;
   }
 }
